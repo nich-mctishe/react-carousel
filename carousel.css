@@ -1,0 +1,117 @@
+
+section.carousel {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: yellow;
+  position: relative;
+
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+section.carousel ul.slide--deck {
+  list-style-type: none;
+  display: -webkit-inline-box;
+  display: -moz-inline-box;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+
+  height: 100%;
+
+  -webkit-transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -moz-transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -o-transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+section.carousel ul.slide--deck.no-animation {
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  transition: none;
+}
+
+section.carousel ul.slide--deck > li {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+section.carousel > .carousel--window,
+section.carousel > .carousel--controls {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+section.carousel > .carousel--window {
+  overflow: hidden;
+}
+
+section.carousel > .carousel--controls {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  -ms-flex-pack: distribute;
+  -webkit-box-pack: space-around;
+  -moz-box-pack: space-around;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+
+  pointer-events: none;
+}
+
+section.carousel > .carousel--controls > .control--wrapper {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+
+  height: 100%;
+  width: 20%;
+}
+
+section.carousel > .carousel--controls > .control--wrapper.next {}
+
+section.carousel > .carousel--controls > .control--wrapper.previous {}
+
+section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] {
+  pointer-events: all;
+  width: 100%;
+  height: 3em;
+  background: orange;
+  cursor: pointer;
+}
