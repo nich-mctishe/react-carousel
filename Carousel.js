@@ -11,17 +11,44 @@ export default class Carousel extends Component {
     pause: PropTypes.bool,
     start: PropTypes.number,
     direction: PropTypes.number, // 1 for reverse -1 for forward
-    interval: PropTypes.number
+    interval: PropTypes.number,
+    duration: PropTypes.number
+  }
+
+  static defaultProps = {
+    duration: 500
+  }
+
+  initial = 1
+
+  animating = false
+
+  clicked = false
+
+  onClick = (e) => {
+    this.clicked = true
+    setTimeout (() => {
+      this.clicked = false
+    }, this.duration * 2)
+
+    if (!this.animating) {
+      const classList = e.target.classList
+      const slider = e.view.document.querySelector('section.carousel ul.slide--deck')
+
+      this.handleMovement(slider,
+        classList.value.includes('previous') ? 'previous' : 'next'
+      )
+    }
   }
 
   state = {
     slides: [],
     arrows: {
       previous: (<Arrow label="previous" cssClass={this.props.arrowClass} onClick={this.onClick} />),
-      next: (<Arrow label="next" cssClass={this.props.arrowClass} onClick={this.onClick}/>)
+      next: (<Arrow label="next" cssClass={this.props.arrowClass} onClick={this.onClick} />)
     },
     paused: false,
-    current: 0,
+    current: 1,
     customArrow: false
   }
 
@@ -31,24 +58,48 @@ export default class Carousel extends Component {
 
   windowRef = React.createRef()
 
-  onClick = e => {
-    const classList = e.target.classList
-    const slider = e.view.document.querySelector('section.carousel ul.slide--deck')
-
+  // may need a handle movement command
+  handleMovement = (slider, direction) => {
     this.setMovement(
       slider,
-      this.getPosition(classList.value.includes('previous') ? 1 : -1)
+      this.getPosition(direction === 'previous' ? 1 : -1)
     )
 
+    if (this.state.current === this.state.slides.length - 1 && direction !== 'previous') {
+      this.handleSpecialMovement (slider, -1)
+    }
+
+    if (this.state.current === 0 && direction === 'previous') {
+      this.handleSpecialMovement (slider, 1)
+    }
+  }
+
+  handleSpecialMovement = (slider, direction) => {
+    slider.classList.add('no-animation')
+    setTimeout(() => {
+      this.setMovement(slider, this.getPosition(direction))
+    }, 1)
+    setTimeout(() => {
+      slider.classList.remove('no-animation')
+    }, 2)
   }
 
   setMovement = (slider, position) => {
+    const { duration } = this.props
+
     if (position !== null) {
       const transform = `translateX(${position}%)`
+      this.animating = true
 
+      slider.style.transitionDuration = `${duration}ms`
+      slider.style.WebkitTransitionDuration = `${duration}ms`
       slider.style.transform = transform
       slider.style.WebkitTransform = transform
       slider.style.msTransform = transform
+
+      setTimeout(() => {
+        this.animating = false
+      }, duration)
     }
   }
 
@@ -65,9 +116,12 @@ export default class Carousel extends Component {
       currentPosition++
     }
 
-    currentPosition = (currentPosition > 0 && currentPosition < this.state.slides.length -1)
-        ? currentPosition
-        : (currentPosition < 0 ) ? this.state.slides.length - 1 : 1
+    currentPosition = (
+      (intended === -1 && currentPosition > 0 && currentPosition < this.state.slides.length) ||
+      (intended === 1 && currentPosition >= 0 && currentPosition <= this.state.slides.length -1)
+    )
+      ? currentPosition
+      : (currentPosition < 0) ? this.state.slides.length - 2 : 1
 
     this.setState({ current: currentPosition })
 
@@ -86,13 +140,25 @@ export default class Carousel extends Component {
   }
 
   setAutoScroll = () => {
+    let interval = null
     if (!this.state.paused) {
-      setTimeout(() => {
-        this.setMovement(
-          document.querySelector('section.carousel ul.slide--deck'),
-          this.getPosition(this.props.direction || -1)
-        )
-      }, this.props.interval * 1000 || 1000)
+      interval = setTimeout(() => {
+        // this.handleMovement(
+        //     document.querySelector('section.carousel ul.slide--deck'),
+        //     this.props.direction === 1 ? 'previous' : 'next')
+        // if (!this.clicked) {
+        //   this.handleMovement(
+        //     document.querySelector('section.carousel ul.slide--deck'),
+        //     this.props.direction === 1 ? 'previous' : 'next')
+        // } else {
+        //   clearTimeout(interval)
+        //   console.log('mid-click');
+        // }
+      }, this.props.interval * 1000 || 2000)
+    } else {
+      if (interval) {
+        clearTimeout(interval)
+      }
     }
   }
 
@@ -129,12 +195,20 @@ export default class Carousel extends Component {
     }
 
     if (this.props.start && this.props.start !== this.state.start) {
-      this.setState({ start: this.props.start })
+      this.initial = this.props.start
+
+      this.setState({
+        current: this.props.start
+      })
     }
   }
 
   componentDidMount () {
     this.resizeSlides()
+    this.handleSpecialMovement(
+      document.querySelector('section.carousel ul.slide--deck'),
+      null
+    )
 
     if (window) {
       window.addEventListener('resize', this.resizeSlides)
@@ -152,12 +226,12 @@ export default class Carousel extends Component {
   }
 
   render () {
-    const { slides, arrows, current } = this.state
+    const { slides, arrows } = this.state
 
     return (
       <section className="carousel">
         <div className="carousel--window" ref={this.windowRef}>
-          <ul className={`slide--deck ${current === slides.length - 1 ? 'no-animation' : ''}`} ref={this.slideDeckRef}>
+          <ul className={`slide--deck`} ref={this.slideDeckRef}>
             {slides}
           </ul>
         </div>

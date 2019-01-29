@@ -24,10 +24,15 @@ section.carousel ul.slide--deck {
 
   height: 100%;
 
-  -webkit-transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  -moz-transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  -o-transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -webkit-transition-property: transform;
+  -moz-transition-property: transform;
+  -o-transition-property: transform;
+  transition-property: transform;
+
+  -webkit-transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -moz-transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  -o-transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 section.carousel ul.slide--deck.no-animation {
