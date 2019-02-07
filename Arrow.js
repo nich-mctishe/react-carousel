@@ -14,7 +14,9 @@ export default class Arrow extends Component {
 
     return (
       <div className={`control--wrapper ${label} ${cssClass || ''}`}>
-        <div className={`control--${label}`} onClick={onClick}/>
+        <div className={`control--${label}`} onClick={onClick}>
+          <div className='arrow' />
+        </div>
       </div>
     )
   }

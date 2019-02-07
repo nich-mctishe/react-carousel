@@ -16,29 +16,43 @@ export default class Carousel extends Component {
   }
 
   static defaultProps = {
-    duration: 1500,
-    interval: 5000,
-    pause: true
+    duration: 500,
+    interval: 1500,
+    pause: false
+  }
+
+  internalState = {
+    animating: false,
+    drag: false,
+    autoSlide: false
   }
 
   initial = 1
 
-  animating = false
+  initialPauseSet = null
 
   interval = null
 
-  clickTimeout = null
-
   xPos = null
 
-  onClick = (e) => {
-    if (!this.animating) {
-      if (!this.state.paused) {
-        this.setState({ paused: true })
+  resetState = () => {
+    this.internalState.animating = false
+    this.internalState.drag = false
+    this.internalState.autoSlide = false
 
-        this.clickTimeout = setTimeout (() => {
-          this.setState({ paused: false })
-        }, this.props.interval)
+    if (this.state.paused &&
+      this.initialPauseSet === false) {
+        console.log('valid');
+      this.setState({ paused: false })
+    }
+
+    this.setAutoScroll()
+  }
+
+  onClick = (e) => {
+    if (!this.internalState.animating) {
+      if (this.initialPauseSet === false && !this.state.paused) {
+        this.setState({ paused: true })
       }
 
       const classList = e.target.classList
@@ -65,54 +79,52 @@ export default class Carousel extends Component {
 
   windowRef = React.createRef()
 
-  // may need a handle movement command
   handleMovement = (slider, direction) => {
-    this.setMovement(
-      slider,
-      this.getPosition(direction === 'previous' ? 1 : -1)
-    )
+    const { duration } = this.props
+    const pos = this.getPosition(direction === 'previous' ? 1 : -1)
 
-    //console.log(this.state.current);
+    this.setMovement( slider, pos, duration )
 
-    if (this.state.current === this.state.slides.length -1 && direction !== 'previous') {
-      this.handleSpecialMovement (slider, -1)
-    }
+    // if just click
+    if (!this.internalState.drag && !this.internalState.autoSlide) {
+      if (
+        (this.state.current === this.state.slides.length -1 && direction !== 'previous') ||
+        (this.state.current === 0 && direction === 'previous')
+      ) {
+        this.handleSpecialMovement (
+          slider,
+          (direction !== 'previous') ? -1 : 1
+        )
+      }
+      // if auto play
+    } else {
+      if ((this.state.current === this.state.slides.length -1 && direction !== 'previous') ||
+      (this.state.current === 0 && direction === 'previous')) {
+        const newCurrent = (this.state.current === 0 && direction === 'previous')
+          ? this.state.slides.length - 2 : this.initial
 
-    if (this.state.current === 0 && direction === 'previous') {
-      this.handleSpecialMovement (slider, 1)
+        setTimeout(() => {
+          this.setMovement (slider, - (newCurrent / this.state.slides.length) * 100, 0)
+          this.setState({current: newCurrent})
+        }, duration)
+      }
     }
   }
 
   handleSpecialMovement = (slider, direction) => {
     slider.classList.add('no-animation')
     setTimeout(() => {
-      this.setMovement(slider, this.getPosition(direction))
+      this.setMovement(slider, this.getPosition(direction), this.props.duration)
     }, 1)
     setTimeout(() => {
       slider.classList.remove('no-animation')
     }, 2)
   }
 
-  handleInitialMovement = (slider, pos) => {
-    const position = - ( pos / this.state.slides.length) * 100
-    const transform = `translateX(${position}%)`
-
-    slider.classList.add('no-animation')
-    slider.style.transform = transform
-    slider.style.WebkitTransform = transform
-    slider.style.msTransform = transform
-
-    setTimeout(() => {
-      slider.classList.remove('no-animation')
-    }, 2)
-  }
-
-  setMovement = (slider, position) => {
-    const { duration } = this.props
-
+  setMovement = (slider, position, duration) => {
     if (position !== null) {
       const transform = `translateX(${position}%)`
-      this.animating = true
+      this.internalState.animating = true
 
       slider.style.transitionDuration = `${duration}ms`
       slider.style.WebkitTransitionDuration = `${duration}ms`
@@ -120,10 +132,9 @@ export default class Carousel extends Component {
       slider.style.WebkitTransform = transform
       slider.style.msTransform = transform
 
-      setTimeout(() => {
-        this.animating = false
-      }, duration)
-
+      setTimeout ( () => {
+        this.resetState()
+      }, duration + 10 )
     }
   }
 
@@ -138,8 +149,6 @@ export default class Carousel extends Component {
       currentPosition++
     }
 
-    console.log(this.state.slides.length);
-
     currentPosition = (
       (intended === -1 && currentPosition > 0 && currentPosition < this.state.slides.length) ||
       (intended === 1 && currentPosition >= 0 && currentPosition <= this.state.slides.length -1)
@@ -153,14 +162,16 @@ export default class Carousel extends Component {
   }
 
   setAutoScroll = () => {
-    if (!this.state.paused) {
+    if (!this.state.paused && this.initialPauseSet === false) {
       if (!this.interval) {
         this.interval = setInterval(() => {
+          this.internalState.autoSlide = true
           this.handleMovement(
               document.querySelector('section.carousel ul.slide--deck'),
               this.props.direction === 1 ? 'previous' : 'next')
         }, this.props.interval)
       }
+
     } else {
       if (this.interval) {
         clearInterval(this.interval)
@@ -170,22 +181,20 @@ export default class Carousel extends Component {
   }
 
   setStartX = (e) => {
-    this.xPos = e.screenX
-
-    console.log(this.xPos);
+    this.xPos = e.screenX || e.touches[0].screenX
   }
 
   onDrag = (e) => {
     let startX = this.xPos
-    let currentX = e.screenX
+    let currentX = e.screenX || e.changedTouches[0].screenX
 
     if (Math.abs(startX - currentX) > 100) {
       if (startX - currentX > 0) {
-        console.log('drag 1');
+        e.target.classList = 'next'
       } else {
-        console.log('drag 2');
+        e.target.classList = 'previous'
       }
-
+      this.internalState.drag = true
       this.onClick(e)
     }
 
@@ -195,6 +204,9 @@ export default class Carousel extends Component {
 
   componentWillMount () {
     const { children } = this.props
+    if (this.initialPauseSet === null) {
+      this.initialPauseSet = this.props.pause
+    }
 
     if (children.length !== this.state.slides.length) {
       const initial = children[0]
@@ -219,7 +231,7 @@ export default class Carousel extends Component {
       })
     }
 
-    if (this.props.pause && this.state.paused !== this.props.pause) {
+    if (this.state.paused !== this.props.pause) {
       this.setState({
         paused: this.props.pause
       })
@@ -235,16 +247,13 @@ export default class Carousel extends Component {
   }
 
   componentDidMount () {
-    this.handleInitialMovement(
+    this.setMovement(
       document.querySelector('section.carousel ul.slide--deck'),
-      this.state.current
+      - (this.state.current / this.state.slides.length) * 100,
+      0
     )
 
     if (window) {
-      //window.addEventListener('resize', this.resizeSlides)
-
-      window.addEventListener('mousedown', this.setStartX)
-      window.addEventListener('mouseup', this.onDrag)
       window.addEventListener('touchstart', this.setStartX)
       window.addEventListener('touchend', this.onDrag)
     }
@@ -257,16 +266,12 @@ export default class Carousel extends Component {
   }
 
   componentWillUnmount () {
-    // window.removeEventListener('resize', this.resizeSlides)
-    window.removeEventListener('mousedown', this.setStartX)
-    window.removeEventListener('mouseup', this.onDrag)
     window.removeEventListener('touchstart', this.setStartX)
     window.removeEventListener('touchend', this.onDrag)
   }
 
   render () {
     const { slides, arrows } = this.state
-
     return (
       <section className="carousel">
         <div className="carousel--window" ref={this.windowRef}>
@@ -284,5 +289,4 @@ export default class Carousel extends Component {
       </section>
     )
   }
-
 }

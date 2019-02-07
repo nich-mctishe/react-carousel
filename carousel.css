@@ -109,14 +109,56 @@ section.carousel > .carousel--controls > .control--wrapper {
   width: 20%;
 }
 
-section.carousel > .carousel--controls > .control--wrapper.next {}
+section.carousel > .carousel--controls > .control--wrapper.next {
+}
 
-section.carousel > .carousel--controls > .control--wrapper.previous {}
+section.carousel > .carousel--controls > .control--wrapper.previous {
+}
 
 section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] {
+  display: flex;
   pointer-events: all;
   width: 100%;
   height: 3em;
-  background: orange;
+  background: transparent;
   cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  box-sizing: border-box;
+  border-left: 1px solid green;
+  border-top: 1px solid green;
+
+  -webkit-transform: rotate(135deg);
+  -moz-transform: rotate(135deg);
+  -o-transform: rotate(135deg);
+  -ms-transform: rotate(135deg);
+  transform: rotate(135deg);
+}
+
+section.carousel > .carousel--controls > .control--wrapper.previous > div[class^="control"] > div.arrow {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+@media screen and (min-width: 420px) {
+  section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
+    width: 50px;
+    height: 50px;
+  }
 }
