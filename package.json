@@ -1,0 +1,29 @@
+{
+  "name": "react-infinte-carousel",
+  "version": "0.0.1",
+  "description": "This is an infinite and optionally autoscroll respoonsive carousel for react.js based applications ",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nich-mctishe/react-carousel.git"
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "next",
+    "nextjs",
+    "carousel",
+    "responsive",
+    "infinite",
+    "flexible"
+  ],
+  "author": "Nich Headlong <nichheadllong@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nich-mctishe/react-carousel/issues"
+  },
+  "homepage": "https://github.com/nich-mctishe/react-carousel#readme"
+}
