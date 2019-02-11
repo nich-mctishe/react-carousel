@@ -2,11 +2,11 @@
   "name": "react-versatile-carousel",
   "version": "0.0.2",
   "description": "This is an infinite and optionally autoscroll respoonsive carousel for react.js based applications ",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch",
-    "build": "webpack"
+    "build": "rollup -c -o build/index.js",
+    "prepublish": "rollup -c -o build/index.js"
   },
   "repository": {
     "type": "git",
@@ -28,14 +28,21 @@
     "url": "https://github.com/nich-mctishe/react-carousel/issues"
   },
   "homepage": "https://github.com/nich-mctishe/react-carousel#readme",
+  "peerDependencies": {
+    "react": ">=15.0.1",
+    "react-dom": ">=15.0.1"
+  },
   "devDependencies": {
+    "@babel/core": "7.2.2",
+    "@babel/plugin-proposal-class-properties": "7.3.0",
+    "@babel/preset-react": "^7.0.0",
+    "prop-types": "^15.6.0",
     "react": ">=15.0.1",
     "react-dom": ">=15.0.1",
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
-    "babel-loader": "^7.0.0",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-react-jsx": "^6.24.1",
-    "babel-preset-env": "^1.5.1"
+    "rollup": "^1.1.2",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-css-only": "^1.0.0",
+    "rollup-plugin-terser": "4.0.4",
+    "webpack": "^2.6.1"
   }
 }

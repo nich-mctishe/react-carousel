@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Arrow from './Arrow'
-import './carousel.css'
+import '../styles/carousel.css'
 import PropTypes from 'prop-types'
 import { format, luminance } from './helpers'
 
