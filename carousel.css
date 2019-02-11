@@ -124,6 +124,7 @@ section.carousel > .carousel--controls > .control--wrapper > div[class^="control
   cursor: pointer;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
@@ -139,6 +140,7 @@ section.carousel > .carousel--controls > .control--wrapper > div[class^="control
   -o-transform: rotate(135deg);
   -ms-transform: rotate(135deg);
   transform: rotate(135deg);
+
 }
 
 section.carousel > .carousel--controls > .control--wrapper.previous > div[class^="control"] > div.arrow {
