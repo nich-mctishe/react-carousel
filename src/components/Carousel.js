@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import Arrow from './Arrow'
-import './carousel.css'
+import styles from '../styles/carousel.css'
 import PropTypes from 'prop-types'
+import { format, luminance } from './helpers'
 
 export default class Carousel extends Component {
 
@@ -12,7 +13,8 @@ export default class Carousel extends Component {
     start: PropTypes.number,
     direction: PropTypes.number, // 1 for reverse -1 for forward
     interval: PropTypes.number,
-    duration: PropTypes.number
+    duration: PropTypes.number,
+    backgrounds: PropTypes.array
   }
 
   static defaultProps = {
@@ -42,8 +44,7 @@ export default class Carousel extends Component {
 
     if (this.state.paused &&
       this.initialPauseSet === false) {
-        console.log('valid');
-      this.setState({ paused: false })
+        this.setState({ paused: false })
     }
 
     this.setAutoScroll()
@@ -56,7 +57,7 @@ export default class Carousel extends Component {
       }
 
       const classList = e.target.classList
-      const slider = e.view.document.querySelector('section.carousel ul.slide--deck')
+      const slider = this.windowRef.current.querySelector('ul')
 
       this.handleMovement(slider,
         classList.value.includes('previous') ? 'previous' : 'next'
@@ -66,6 +67,7 @@ export default class Carousel extends Component {
 
   state = {
     slides: [],
+    backgrounds: [],
     arrows: {
       previous: (<Arrow label="previous" cssClass={this.props.arrowClass} onClick={this.onClick} />),
       next: (<Arrow label="next" cssClass={this.props.arrowClass} onClick={this.onClick} />)
@@ -74,8 +76,6 @@ export default class Carousel extends Component {
     current: 1,
     customArrow: false
   }
-
-  carouselRef = React.createRef()
 
   windowRef = React.createRef()
 
@@ -112,12 +112,12 @@ export default class Carousel extends Component {
   }
 
   handleSpecialMovement = (slider, direction) => {
-    slider.classList.add('no-animation')
+    slider.classList.add('noAnimation')
     setTimeout(() => {
       this.setMovement(slider, this.getPosition(direction), this.props.duration)
     }, 1)
     setTimeout(() => {
-      slider.classList.remove('no-animation')
+      slider.classList.remove('noAnimation')
     }, 2)
   }
 
@@ -167,7 +167,7 @@ export default class Carousel extends Component {
         this.interval = setInterval(() => {
           this.internalState.autoSlide = true
           this.handleMovement(
-              document.querySelector('section.carousel ul.slide--deck'),
+              this.windowRef.current.querySelector('ul'),
               this.props.direction === 1 ? 'previous' : 'next')
         }, this.props.interval)
       }
@@ -203,22 +203,21 @@ export default class Carousel extends Component {
   }
 
   componentWillMount () {
-    const { children } = this.props
+    const { children, backgrounds } = this.props
     if (this.initialPauseSet === null) {
       this.initialPauseSet = this.props.pause
     }
 
     if (children.length !== this.state.slides.length) {
-      const initial = children[0]
-      const last = children[children.length - 1]
-      let slides = children.map(child => {
-        return child
-      })
-      // add the 1st slide last and the last slide first
-      slides.push(initial)
-      slides.unshift(last)
+      let newState = {
+        slides: format.array(children)
+      }
 
-      this.setState({ slides: slides })
+      if (backgrounds) {
+        newState.backgrounds = format.array(backgrounds)
+      }
+
+      this.setState(newState)
     }
 
     if (this.props.arrow && !this.state.customArrow) {
@@ -247,8 +246,9 @@ export default class Carousel extends Component {
   }
 
   componentDidMount () {
+    console.log(this.windowRef.current);
     this.setMovement(
-      document.querySelector('section.carousel ul.slide--deck'),
+      this.windowRef.current.querySelector('ul'),
       - (this.state.current / this.state.slides.length) * 100,
       0
     )
@@ -273,16 +273,15 @@ export default class Carousel extends Component {
   render () {
     const { slides, arrows } = this.state
     return (
-      <section className="carousel">
-        <div className="carousel--window" ref={this.windowRef}>
+      <section className={styles.carousel}>
+        <div className={styles.carouselWindow} ref={this.windowRef}>
           <ul
-            className={`slide--deck`}
-            ref={this.slideDeckRef}
+            className={styles.slideDeck}
             style={{ width: `${this.state.slides.length * 100}%` }}>
             {slides}
           </ul>
         </div>
-        <div className="carousel--controls">
+        <div className={`${styles.carouselControls} ${luminance.check(this.state.backgrounds[this.state.current])}`}>
           {arrows.previous && (arrows.previous)}
           {arrows.next && (arrows.next)}
         </div>

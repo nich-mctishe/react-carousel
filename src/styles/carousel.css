@@ -1,5 +1,5 @@
 
-section.carousel {
+.carousel {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -14,7 +14,7 @@ section.carousel {
   display: flex;
 }
 
-section.carousel ul.slide--deck {
+.slideDeck {
   list-style-type: none;
   display: -webkit-inline-box;
   display: -moz-inline-box;
@@ -35,14 +35,14 @@ section.carousel ul.slide--deck {
   transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-section.carousel ul.slide--deck.no-animation {
+.slideDeck.noAnimation {
   -webkit-transition: none;
   -moz-transition: none;
   -o-transition: none;
   transition: none;
 }
 
-section.carousel ul.slide--deck > li {
+.slideDeck > li {
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -65,18 +65,17 @@ section.carousel ul.slide--deck > li {
   height: 100%;
 }
 
-section.carousel > .carousel--window,
-section.carousel > .carousel--controls {
+.carouselWindow, .carouselControls {
   position: absolute;
   width: 100%;
   height: 100%;
 }
 
-section.carousel > .carousel--window {
+.carouselWindow {
   overflow: hidden;
 }
 
-section.carousel > .carousel--controls {
+.carouselControls {
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -92,7 +91,7 @@ section.carousel > .carousel--controls {
   pointer-events: none;
 }
 
-section.carousel > .carousel--controls > .control--wrapper {
+.carouselControls > .controlWrapper {
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -109,13 +108,8 @@ section.carousel > .carousel--controls > .control--wrapper {
   width: 20%;
 }
 
-section.carousel > .carousel--controls > .control--wrapper.next {
-}
-
-section.carousel > .carousel--controls > .control--wrapper.previous {
-}
-
-section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] {
+.carouselControls > .controlWrapper > .controlprevious,
+.carouselControls > .controlWrapper > .controlnext {
   display: flex;
   pointer-events: all;
   width: 100%;
@@ -124,9 +118,10 @@ section.carousel > .carousel--controls > .control--wrapper > div[class^="control
   cursor: pointer;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
-section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
+section.carousel > .carouselControls > .controlWrapper div.arrow {
   width: 20px;
   height: 20px;
   background: transparent;
@@ -139,9 +134,10 @@ section.carousel > .carousel--controls > .control--wrapper > div[class^="control
   -o-transform: rotate(135deg);
   -ms-transform: rotate(135deg);
   transform: rotate(135deg);
+
 }
 
-section.carousel > .carousel--controls > .control--wrapper.previous > div[class^="control"] > div.arrow {
+section.carousel > .carouselControls > .controlWrapper > .controlprevious > div.arrow {
   -webkit-transform: rotate(-45deg);
   -moz-transform: rotate(-45deg);
   -o-transform: rotate(-45deg);
@@ -150,14 +146,14 @@ section.carousel > .carousel--controls > .control--wrapper.previous > div[class^
 }
 
 @media screen and (min-width: 420px) {
-  section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
+  section.carousel > .carouselControls > .controlWrapper div.arrow {
     width: 32px;
     height: 32px;
   }
 }
 
 @media screen and (min-width: 768px) {
-  section.carousel > .carousel--controls > .control--wrapper > div[class^="control"] > div.arrow {
+  section.carousel > .carouselControls > .controlWrapper div.arrow {
     width: 50px;
     height: 50px;
   }

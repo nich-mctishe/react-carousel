@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import styles from '../styles/carousel.css'
 
 export default class Arrow extends Component {
 
@@ -13,9 +14,9 @@ export default class Arrow extends Component {
     const { label, cssClass, onClick } = this.props
 
     return (
-      <div className={`control--wrapper ${label} ${cssClass || ''}`}>
-        <div className={`control--${label}`} onClick={onClick}>
-          <div className='arrow' />
+      <div className={`${styles.controlWrapper} ${label} ${cssClass || ''}`}>
+        <div className={styles['control' + label]} onClick={onClick}>
+          <div className={`${styles.arrow} ${label}`} />
         </div>
       </div>
     )

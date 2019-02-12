@@ -1,0 +1,7 @@
+#!/bin/sh
+
+rollup -c -o build/index.js
+
+cp build/assets/*.css build/carousel.css
+
+rm -rf build/assets

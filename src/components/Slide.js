@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import styles from '../styles/carousel.css'
 
 export default class Slide extends Component {
 
@@ -18,7 +19,7 @@ export default class Slide extends Component {
   render () {
 
     return (
-      <li className="carousel--slide" onClick={this.onClick}>
+      <li className={styles.carouselSlide} onClick={this.onClick}>
         {this.props.children}
       </li>
     )
