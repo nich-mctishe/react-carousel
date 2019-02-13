@@ -17,7 +17,7 @@ export default class Carousel extends Component {
     interval: PropTypes.number,
     duration: PropTypes.number,
     backgrounds: PropTypes.array,
-
+    cssName: PropTypes.string
   }
   /**
    * @var {Object} defaultProps
@@ -379,8 +379,10 @@ export default class Carousel extends Component {
    */
   render () {
     const { slides, arrows } = this.state
+    const { cssName } = this.props
+
     return (
-      <section className={styles.carousel}>
+      <section className={`${styles.carousel} ${cssName || ''}`}>
         <div className={styles.carouselWindow} ref={this.windowRef}>
           <ul
             className={`${styles.slideDeck} c--slides`}

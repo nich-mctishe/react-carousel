@@ -14,6 +14,11 @@
   display: flex;
 }
 
+.carousel * {
+  padding: 0;
+  margin: 0;
+}
+
 .slideDeck {
   list-style-type: none;
   display: -webkit-inline-box;
@@ -43,11 +48,15 @@
 }
 
 .slideDeck > li {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
 }
 
 .carouselSlide {
+  margin: 0;
+  padding: 0;
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
