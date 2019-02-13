@@ -1,4 +1,10 @@
-
+/**
+ * @var {Function} hexToRgb
+ * converts passed in hex to rgb object
+ * @param {String} hex
+ *
+ * @returns {Object}
+ */
 const hexToRgb = hex => {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -13,7 +19,15 @@ const hexToRgb = hex => {
         b: parseInt(result[3], 16)
     } : null;
 }
-
+/**
+ * @var {Function} relativeLuminanceW3C
+ * asserts relative Luminance based on W3C spec
+ * @param {Number} R8bit = red
+ * @param {Number} R8bit = green
+ * @param {Number} R8bit = blue
+ *
+ * @returns {Object}
+ */
 const relativeLuminanceW3C = (R8bit, G8bit, B8bit) => {
 
     const RsRGB = R8bit/255
@@ -27,18 +41,35 @@ const relativeLuminanceW3C = (R8bit, G8bit, B8bit) => {
     // For the sRGB colorspace, the relative luminance of a color is defined as:
     return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 }
-
+/**
+ * @var {Function} formatArray
+ * duplicates first and last child object and returns as array
+ * @param {JSX} original
+ *
+ * @returns {Array}
+ */
 const formatArray = original => {
-  const initial = original[0]
-  const last = original[original.length - 1]
-  let final = original.map(child => child)
-  // add the 1st slide last and the last slide first
-  final.push(initial)
-  final.unshift(last)
+  if (original.length > 1) {
+    const initial = original[0]
+    const last = original[original.length - 1]
+    let final = original.map(child => child)
+    // add the 1st slide last and the last slide first
+    final.push(initial)
+    final.unshift(last)
 
-  return final
+    return final
+  }
+
+  return Array.from(original)
+
 }
-
+/**
+ * @var {function} assertLuminance
+ * determines if slide colour is light or dark
+ * @params {String} colour
+ *
+ * @returns {String}
+ */
 const assertLuminance = (colour) => {
   if (colour) {
     const color = hexToRgb(colour)
@@ -48,11 +79,19 @@ const assertLuminance = (colour) => {
 
   return 'light'
 }
-
+/**
+ * @var {Object} format
+ * beautifies call to formatArray
+ * allows for grouping of future functions
+ */
 const format = {
   array: formatArray
 }
-
+/**
+ * @var {Object} luminance
+ * beautifies call to assertLuminance
+ * allows for grouping of future functions
+ */
 const luminance = {
   check: assertLuminance
 }
