@@ -371,6 +371,11 @@ export default class Carousel extends Component {
   componentWillUnmount () {
     window.removeEventListener('touchstart', this.setStartX)
     window.removeEventListener('touchend', this.onDrag)
+
+    if (this.interval) {
+      clearInterval(this.interval)
+      this.interval = null
+    }
   }
   /**
    * @var {Function} render
