@@ -10,14 +10,16 @@ export default class Carousel extends Component {
    */
   static propTypes = {
     arrowClass: PropTypes.string,
-    arrow: PropTypes.object,
+    arrow: PropTypes.element,
     pause: PropTypes.bool,
     start: PropTypes.number,
     direction: PropTypes.number, // 1 for reverse -1 for forward
     interval: PropTypes.number,
     duration: PropTypes.number,
     backgrounds: PropTypes.array,
-    cssName: PropTypes.string
+    cssName: PropTypes.string,
+    onNav: PropTypes.func,
+    onNavEnd: PropTypes.func
   }
   /**
    * @var {Object} defaultProps
@@ -25,7 +27,9 @@ export default class Carousel extends Component {
   static defaultProps = {
     duration: 500,
     interval: 1500,
-    pause: false
+    pause: false,
+    onNav: direction => () => {},
+    onNavEnd: () => {}
   }
   /**
    * @var {Object} internalState
@@ -76,11 +80,12 @@ export default class Carousel extends Component {
   }
   /**
    * @var {function} onClick
+   * @param {String} direction = previous|next
    * @param {Object} e = passed in event
    * event handles clicks and drag results.
    * @returns {void}
    */
-  onClick = (e) => {
+  onClick = direction => (e) => {
     if (!this.internalState.animating) {
       if (this.initialPauseSet === false && !this.state.paused) {
         this.setState({ paused: true })
@@ -89,9 +94,8 @@ export default class Carousel extends Component {
       const classList = e.target.classList
       const slider = this.windowRef.current.querySelector('ul')
 
-      this.handleMovement(slider,
-        classList.value.includes('previous') ? 'previous' : 'next'
-      )
+      this.handleMovement(slider, direction)
+      this.props.onNav(direction)
     }
   }
   /**
@@ -101,8 +105,8 @@ export default class Carousel extends Component {
     slides: [],
     backgrounds: [],
     arrows: {
-      previous: (<Arrow label="previous" cssClass={this.props.arrowClass} onClick={this.onClick} />),
-      next: (<Arrow label="next" cssClass={this.props.arrowClass} onClick={this.onClick} />)
+      previous: (<Arrow label="previous" cssClass={this.props.arrowClass} onClick={this.onClick('previous')} />),
+      next: (<Arrow label="next" cssClass={this.props.arrowClass} onClick={this.onClick('next')} />)
     },
     paused: false,
     current: 1,
@@ -190,6 +194,10 @@ export default class Carousel extends Component {
       slider.style.msTransform = transform
 
       setTimeout ( () => {
+        if (this.state.paused && !this.internalState.autoSlide) {
+          this.props.onNavEnd()
+        }
+
         this.resetState()
       }, duration + 10 )
     }
@@ -268,8 +276,6 @@ export default class Carousel extends Component {
     let startX = this.xPos
     let currentX = e.screenX || e.changedTouches[0].screenX
 
-    console.log(e);
-
     if (Math.abs(startX - currentX) > 100) {
       e.target.classList.remove('next', 'previous')
 
@@ -311,8 +317,8 @@ export default class Carousel extends Component {
     if (this.props.arrow && !this.state.customArrow) {
       this.setState({
         arrows: {
-          previous: (<this.props.arrow label="previous" onClick={this.onClick} />),
-          next: (<this.props.arrow label="next" onClick={this.onClick} />)
+          previous: (<this.props.arrow label="previous" onClick={this.onClick('previous')} />),
+          next: (<this.props.arrow label="next" onClick={this.onClick('next')} />)
         },
         customArrow: true
       })
